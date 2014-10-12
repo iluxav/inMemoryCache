@@ -9,8 +9,15 @@ window.cache = (function () {
 	var tickers = {};
 	var handlers = [];
 	var handlersByKey = {};
+	var settings={
+		defaultTimeout:5
+	};
 
 	var set = function (key, value, seconds) {
+		data[key] = value;
+		startExpirationCountdown(key,seconds);
+	};
+	var startExpirationCountdown = function (key,seconds) {
 		var ticker = tickers[key];
 		if (ticker) {
 			clearInterval(ticker);
@@ -19,25 +26,22 @@ window.cache = (function () {
 		}
 		tickers[key] = setTimeout(function () {
 			onTimeout(key);
-		}, seconds);
-
-		data[key] = value;
-
+		}, seconds || settings.defaultTimeout);
 	};
 
-	var fireEvents = function (handlers, key,obj) {
+	var fireEvents = function (handlers, key, obj) {
 		if (!handlers || handlers.length === 0)
 			return;
 		for (var i = 0; i < handlers.length; i++) {
 			var handler = handlers[i];
 			if (handler) {
-				handler({key:key,data:obj});
+				handler({key: key, data: obj});
 			}
 		}
 	};
 	var get = function (key) {
 		console.time('get by key');
-		var res= data[key];
+		var res = data[key];
 		console.timeEnd('get by key');
 		return res;
 	};
@@ -46,8 +50,8 @@ window.cache = (function () {
 		(function (key) {
 			console.time('onTimeout with handlers');
 			var fetched = data[key];
-			fireEvents(handlers, key,fetched);
-			fireEvents(handlersByKey[key],key, fetched);
+			fireEvents(handlers, key, fetched);
+			fireEvents(handlersByKey[key], key, fetched);
 			delete data[key];
 			console.log('Remove key:', key);
 			console.timeEnd('onTimeout with handlers');
@@ -56,7 +60,7 @@ window.cache = (function () {
 	var onExpired = function (key, callback) {
 		if (arguments.length > 1 && typeof key === 'string' && typeof callback === 'function') {
 			if (!handlersByKey[key])
-				handlersByKey[key]=[];
+				handlersByKey[key] = [];
 
 			handlersByKey[key].push(callback);
 		}
@@ -69,6 +73,6 @@ window.cache = (function () {
 		set: set,
 		get: get,
 		onExpired: onExpired,
-		data:data
+		data: data
 	};
 })();
