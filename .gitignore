@@ -1,0 +1,8 @@
+node_modules
+public
+.tmp
+.idea
+client/bower_components
+dist
+client/components/scheduler/
+/server/config/local.env.js
