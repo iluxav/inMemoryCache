@@ -22,7 +22,7 @@ var InMemoryCache = function () {
 		if (ticker) {
 			clearInterval(ticker);
 			ticker = null;
-			console.log('Timer is about to restart with key:', key);
+			console.log('Timer is about to reset key:', key);
 		}
 		tickers[key] = setTimeout(function () {
 			onTimeout(key);
