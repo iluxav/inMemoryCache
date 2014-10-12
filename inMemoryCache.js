@@ -3,7 +3,7 @@
  */
 
 
-window.cache = (function () {
+var InMemoryCache = function () {
 
 	var data = {};
 	var tickers = {};
@@ -75,4 +75,4 @@ window.cache = (function () {
 		onExpired: onExpired,
 		data: data
 	};
-})();
+};
